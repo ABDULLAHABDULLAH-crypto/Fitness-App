@@ -1,4 +1,3 @@
-import 'package:fitness_app/pages/adding_page.dart';
 import 'package:fitness_app/pages/auth/SignIn.dart';
 import 'package:fitness_app/pages/auth/SignUp.dart';
 import 'package:fitness_app/pages/mainPage.dart';
@@ -127,7 +126,7 @@ class _OnboardingState extends State<OnBoarding> {
                                   Navigator.push(
                                       context,
                                       MaterialPageRoute(
-                                          builder: (context) => AddingPage()));
+                                          builder: (context) => MainPage()));
                                 },
                                 child: const Text(
                                   "Skip",
