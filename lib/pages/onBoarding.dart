@@ -18,8 +18,11 @@ class _OnboardingState extends State<OnBoarding> {
           itemBuilder: (_, i) {
             return Stack(
               children: [
-                Container(
-                  child: Image.asset("assets/images/Rectangle 1.png"),
+                Expanded(
+                  child: Image.asset(
+                    "assets/images/Rectangle 1.png",
+                    fit: BoxFit.cover,
+                  ),
                 ),
                 Positioned(
                   bottom: 0,
