@@ -94,8 +94,8 @@ class AddingPage extends StatelessWidget {
                       borderRadius: BorderRadius.vertical(
                         top: Radius.circular(16.0),
                       ),
-                      child: Image.network(
-                        'https://images.pexels.com/photos/17840/pexels-photo.jpg', // Replace with your image URL
+                      child: Image.asset(
+                        'assets/images/Rectangle 3.png', // Replace with your image URL
                         fit: BoxFit.cover,
                         height: 200,
                         width: double.infinity,
@@ -178,24 +178,6 @@ class AddingPage extends StatelessWidget {
                     color: Colors.white,
                   ),
                 ),
-              ),
-            ),
-            Spacer(),
-            // Bottom Navigation Bar
-            Container(
-              decoration: BoxDecoration(
-                color: Colors.white,
-                borderRadius: BorderRadius.vertical(
-                  top: Radius.circular(16.0),
-                ),
-              ),
-              padding: EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
-              child: const Row(
-                mainAxisAlignment: MainAxisAlignment.spaceAround,
-                children: [
-                  Icon(Icons.fitness_center, color: Colors.black, size: 32),
-                  Icon(Icons.settings, color: Colors.grey, size: 32),
-                ],
               ),
             ),
           ],
