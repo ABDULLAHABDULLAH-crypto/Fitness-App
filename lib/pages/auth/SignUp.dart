@@ -1,11 +1,54 @@
-import 'package:fitness_app/pages/mainPage.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:fitness_app/pages/mainPage.dart';
 
-class SignUp extends StatelessWidget {
+class SignUp extends StatefulWidget {
+  @override
+  _SignUpState createState() => _SignUpState();
+}
+
+class _SignUpState extends State<SignUp> {
   final _formKey = GlobalKey<FormState>();
+  final FirebaseAuth _auth = FirebaseAuth.instance;
+  
+  // Controllers to get text from TextFormFields
+  final TextEditingController _nameController = TextEditingController();
+  final TextEditingController _emailController = TextEditingController();
+  final TextEditingController _passwordController = TextEditingController();
+  final TextEditingController _rePasswordController = TextEditingController();
+
+  // Function to handle SignUp
+  Future<void> _signUp() async {
+    if (_passwordController.text != _rePasswordController.text) {
+      // If passwords don't match, show an error
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Passwords do not match')),
+      );
+      return;
+    }
+
+    try {
+      // Create the user with Firebase Authentication
+      UserCredential userCredential = await _auth.createUserWithEmailAndPassword(
+        email: _emailController.text,
+        password: _passwordController.text,
+      );
+
+      // On successful sign up, navigate to MainPage
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(builder: (context) => MainPage()),
+      );
+    } catch (e) {
+      // Handle error during sign-up
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Error: $e')),
+      );
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
-    // TODO: implement build
     return Scaffold(
       body: Container(
         decoration: const BoxDecoration(color: Color(0xFF0D1B2A)),
@@ -16,8 +59,7 @@ class SignUp extends StatelessWidget {
             padding: EdgeInsets.all(20),
             child: ElevatedButton(
                 style: ElevatedButton.styleFrom(
-                    padding:
-                        const EdgeInsets.symmetric(horizontal: 0, vertical: 0)),
+                    padding: const EdgeInsets.symmetric(horizontal: 0, vertical: 0)),
                 onPressed: () {
                   Navigator.pop(context);
                 },
@@ -48,14 +90,14 @@ class SignUp extends StatelessWidget {
                         Padding(
                           padding: EdgeInsets.all(20),
                           child: TextFormField(
+                            controller: _nameController,
                             decoration: const InputDecoration(
                                 labelText: "Enter Your Name",
                                 border: OutlineInputBorder(),
                                 icon: Icon(Icons.person)),
-                            // The validator receives the text that the user has entered.
                             validator: (value) {
                               if (value == null || value.isEmpty) {
-                                return 'Please enter some text';
+                                return 'Please enter your name';
                               }
                               return null;
                             },
@@ -64,14 +106,17 @@ class SignUp extends StatelessWidget {
                         Padding(
                           padding: EdgeInsets.all(20),
                           child: TextFormField(
+                            controller: _emailController,
                             decoration: const InputDecoration(
                                 labelText: "Enter Your Email",
                                 border: OutlineInputBorder(),
-                                icon: Icon(Icons.person)),
-                            // The validator receives the text that the user has entered.
+                                icon: Icon(Icons.email)),
                             validator: (value) {
                               if (value == null || value.isEmpty) {
-                                return 'Please enter some text';
+                                return 'Please enter your email';
+                              }
+                              if (!RegExp(r'^[^@]+@[^@]+\.[^@]+').hasMatch(value)) {
+                                return 'Please enter a valid email address';
                               }
                               return null;
                             },
@@ -80,14 +125,18 @@ class SignUp extends StatelessWidget {
                         Padding(
                           padding: EdgeInsets.all(20),
                           child: TextFormField(
+                            controller: _passwordController,
+                            obscureText: true,
                             decoration: const InputDecoration(
                                 labelText: "Enter Your Password",
                                 border: OutlineInputBorder(),
                                 icon: Icon(Icons.lock)),
-                            // The validator receives the text that the user has entered.
                             validator: (value) {
                               if (value == null || value.isEmpty) {
-                                return 'Please enter some text';
+                                return 'Please enter your password';
+                              }
+                              if (value.length < 6) {
+                                return 'Password must be at least 6 characters';
                               }
                               return null;
                             },
@@ -96,14 +145,15 @@ class SignUp extends StatelessWidget {
                         Padding(
                           padding: EdgeInsets.all(20),
                           child: TextFormField(
+                            controller: _rePasswordController,
+                            obscureText: true,
                             decoration: const InputDecoration(
-                                labelText: "Re Enter Your Password",
+                                labelText: "Re-enter Your Password",
                                 border: OutlineInputBorder(),
                                 icon: Icon(Icons.lock)),
-                            // The validator receives the text that the user has entered.
                             validator: (value) {
                               if (value == null || value.isEmpty) {
-                                return 'Please enter some text';
+                                return 'Please re-enter your password';
                               }
                               return null;
                             },
@@ -112,18 +162,11 @@ class SignUp extends StatelessWidget {
                         SizedBox(height: 20),
                         ElevatedButton(
                           style: ElevatedButton.styleFrom(
-                              padding: EdgeInsets.symmetric(
-                                  vertical: 30, horizontal: 120),
+                              padding: EdgeInsets.symmetric(vertical: 30, horizontal: 120),
                               backgroundColor:const Color.fromARGB(255, 28, 47, 68)),
                           onPressed: () {
-                            // Validate returns true if the form is valid, or false otherwise.
                             if (_formKey.currentState!.validate()) {
-                              // If the form is valid, display a snackbar. In the real world,
-                              // you'd often call a server or save the information in a database.
-                              ScaffoldMessenger.of(context).showSnackBar(
-                                const SnackBar(
-                                    content: Text('Processing Data')),
-                              );
+                              _signUp();  // Call the signUp function
                             }
                           },
                           child: const Text(
@@ -134,7 +177,6 @@ class SignUp extends StatelessWidget {
                         SizedBox(height: 20),
                         GestureDetector(
                           onTap: () {
-                            // Handle Skip action
                             Navigator.push(
                                 context,
                                 MaterialPageRoute(
